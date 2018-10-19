@@ -3,31 +3,62 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MySql;
 
 namespace LibBase_Datos
 {
     public class Tabla
     {
+        public Tabla()
+        {
+            try
+            {
+                Tabla.estado = BanderaDeEstado.CREACION;
+            }
+            catch (Exception ex)
+            {
+                error = "Error: " + ex.ToString();
+            }
+        }
+
+        public static BanderaDeEstado estado;
+        public string error;
         protected int id;
         protected string comment;
         public List<Columna> columns = new List<Columna>();
         public string table_name;
 
-        public bool CreateTable()
+        public string CreateTable()
         {
-            string sentence = "CREATE TABLE ";
-            bool res = false;
+            string sentence = "DROP TABLE IF EXISTS " + this.table_name + "; CREATE TABLE ";
             try
             {
                 sentence += this.table_name;
                 sentence += " (Id int(16) NOT NULL PRIMARY KEY unsigned AUTO_INCREMENT,";
                 foreach (Columna col in this.columns)
                 {
+                    int con = 0;
+                    object _default = "";
                     string longitud = "";
                     string no_nulo = "";
                     if (col.lenght != 0)
                     {
                         longitud = "(" + col.lenght + " )";
+                    }
+                    if (!(col.default_value is null))
+                    {
+                        if (col.column_type == TipoDeCampo.Varchar || col.column_type == TipoDeCampo.Char || col.column_type == TipoDeCampo.Text)
+                        {
+                            _default = "DEFAULT '" + col.default_value + "'";
+                        }
+                        else
+                        {
+                            _default = "DEFAULT " + col.default_value;
+                        }
+                    }
+                    if (col.column_comment == string.Empty)
+                    {
+                        comment = "COMMENT '" + col.column_comment + "'";
                     }
                     if (col.nulleable)
                     {
@@ -37,13 +68,26 @@ namespace LibBase_Datos
                     {
                         no_nulo = " NULL ";
                     }
-                    sentence += col.nombre + " " + col.column_type + longitud + " " + no_nulo;
+                    sentence += " " + col.nombre + " " + col.column_type + longitud + " " + no_nulo + " " + _default + " " + comment;
+                    con++;
+                    if (con != columns.Count)
+                    {
+                        sentence += ", ";
+                    }
                 }
+                sentence += ");";
             }
             catch (Exception ex)
             {
-
+                error = "Error: " + ex.ToString();
+                Tabla.estado = BanderaDeEstado.ERROR_DE_SINTAXYS;
             }
+            return sentence;
+        }
+
+        public bool CrearTabla()
+        {
+
         }
 
         public class Columna
@@ -148,11 +192,16 @@ namespace LibBase_Datos
 
     public enum TipoDeCampo
     {
-        TinyInt, Int, Float, Double, Varchar, Text, Date, TimeStamp, DateTime, Boolean
+        TinyInt, Int, Float, Double, Char, Varchar, Text, Date, TimeStamp, DateTime, Boolean
     }
 
     public enum Indice
     {
         No, Primary, Key,Unique, Mul, Spatial
+    }
+
+    public enum BanderaDeEstado
+    {
+        CREACION, CREADA, ALTERADA, BORRADO, ERROR_DE_SINTAXYS
     }
 }

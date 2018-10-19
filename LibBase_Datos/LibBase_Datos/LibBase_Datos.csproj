@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrearTabla.cs" />
+    <Compile Include="IBD.cs" />
     <Compile Include="MySql.cs" />
     <Compile Include="Tabla.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

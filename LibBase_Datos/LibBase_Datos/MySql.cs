@@ -20,6 +20,7 @@ namespace LibBase_Datos
         public static int id_usuario;
         public static int nivel;
         private bool res;
+        private int ResultadoQueryORM;
 
         public MySql(string server, string db, string us, string pwd)
         {
@@ -249,6 +250,33 @@ namespace LibBase_Datos
                 CerrarConexión();
             }
             return dt;
+        }
+
+        public bool ExecuteTableQuery(string Query)
+        {
+            res = false;
+            try
+            {
+                if(AbrirConexión())
+                {
+                    cmd = new MySqlCommand(Query, cn);
+                    ResultadoQueryORM =  cmd.ExecuteNonQuery();
+                    res = true;
+                }
+            }
+            catch (MySqlException mysqlex)
+            {
+                errorMsge = "Error de MySql al ejecutar la instrucción: " + mysqlex.ToString();
+            }
+            catch (Exception ex)
+            {
+                errorMsge = "Error al ejecutar la instrucción: " + ex.ToString();
+            }
+            finally
+            {
+                CerrarConexión();
+            }
+            return res;
         }
     }
 }

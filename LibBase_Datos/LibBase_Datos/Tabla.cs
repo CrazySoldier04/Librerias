@@ -85,10 +85,11 @@ namespace LibBase_Datos
             return sentence;
         }
 
-        public bool CrearTabla()
+        public bool CrearLaTabla()
         {
-
-        }
+            CrearTabla tabla = new CrearTabla();
+            tabla.CrearTabla();
+        }//Fin método CrearLaTabla().
 
         public class Columna
         {
@@ -112,10 +113,15 @@ namespace LibBase_Datos
             public string column_comment;
             public object value;
         }
-    }
+    }//Fin clase Tabla.
 
     public class Usuarios : Tabla
     {
+        public class SubUsuarios : Usuarios
+        {
+
+        }//Fin clase SubUsuarios.
+
         public Usuarios()
         {
             this.comment = "En esta tabla se guardará la información de los usuarios";
@@ -130,6 +136,8 @@ namespace LibBase_Datos
         {
             this.columns.Add(new Columna(nom, tipo_columna, largo_campo, es_null, valor_default, llave, coment_column,""));
         }
+
+        public List<Usuarios> ColeccionRegistros = new List<Usuarios>();
 
         public string Name
         {
@@ -173,7 +181,7 @@ namespace LibBase_Datos
             set { this.columns[4].value = value; }
             get { return this.columns[4].value.ToString(); }
         }
-    }
+    }//Fin clase Usuario.
 
     //public class Ventas : Tabla
     //{

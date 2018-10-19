@@ -12,9 +12,9 @@ namespace LibBase_Datos
         MySql libm = new MySql("localhost", "mex_dev_so", "root","salazar");
         bool res;
 
-        public bool CrearTabla()
+        public bool CrearTabla(string Query)
         {
-            res = libm.ExecuteTableQuery();
+            res = libm.ExecuteTableQuery(Query);
             if (res)
             {
 
